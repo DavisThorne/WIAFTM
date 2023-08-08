@@ -1,0 +1,10 @@
+{
+  "bot_token": "Enter your bots token",
+  "client_id": "enter client ID, (this is currently unused)",
+  "client_secret": "enter client secret, (currently unused)",
+  "owner_id": "enter owner ID, (Currently unused)",
+  "guild_id": "Enter guild ID, (currently unused)",
+  "quote_roll": "Enter the roll ID for the roll that will allow to have quotes added to the table",
+  "api_key": "API key for pawan-krd reverse proxy (discord.pawan.krd)",
+  "clyde_channel": "channel that the clyde command to be used in (currently unfunctional)"
+}
