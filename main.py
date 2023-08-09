@@ -30,6 +30,7 @@ guildID = config.get("guild_id")
 # modules imports
 client.load_extension("modules.funny")
 client.load_extension("modules.utils")
+client.load_extension("modules.economy")
 
 
 # Events
@@ -45,6 +46,7 @@ async def on_ready():
 @client.slash_command(name="ping", description="Returns Bots Latency")
 async def ping(ctx):
     await ctx.respond(f'Pong! {round(client.latency * 1000)}ms')
+
 
 @client.slash_command(name="help", description="Get some help.")
 async def help(ctx):
