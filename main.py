@@ -47,7 +47,7 @@ async def ping(ctx):
     await ctx.respond(f'Pong! {round(client.latency * 1000)}ms')
 
 @client.slash_command(name="help", description="Get some help.")
-async def help(ctx ):
+async def help(ctx):
     help_embed = discord.Embed(title="My Bot's Help!")
     command_names_list = [x.name for x in client.commands]
 

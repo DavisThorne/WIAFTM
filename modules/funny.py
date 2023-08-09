@@ -54,17 +54,6 @@ class Funny(commands.Cog, name="Funny"):
             embed.add_field(name="Cringe As Fuck", value=reply, inline=False)
             await ctx.respond(embed=embed)
 
-    async def help_funny(self, cog):
-        embed = discord.Embed(title=cog.qualified_name or "No Category", description=cog.description,
-                              color=discord.Color.blurple())
-
-        if filtered_commands := await self.filter_commands(cog.get_commands()):
-            for command in filtered_commands:
-                embed.add_field(name=self.get_command_signature(command),
-                                value=command.help or "No Help Message Found... ")
-
-        await self.get_destination().send(embed=embed)
-
     @add_quote.error
     async def role_error(self, ctx, error):
         print(error)

@@ -15,7 +15,7 @@ class Utils(commands.Cog, name="Utils"):
     @commands.slash_command(name="clyde", description="Sends @Clyde a message(Fuck Clyde)")
     async def clyde(self, ctx,
                     message: discord.Option(str, required=True)):
-         await ctx.respond(f"<@1081004946872352958> {message}")
+        await ctx.respond(f"<@1081004946872352958> {message}")
 
     @commands.slash_command(name="ask_ai", description="Asks an AI a question")
     async def ask_ai(self, ctx,
@@ -47,7 +47,7 @@ class Utils(commands.Cog, name="Utils"):
         output = json.dumps(response.json().get("choices")[1].get("content"), indent=4)
         print(response)
         print(output)
-        #await ctx.respond(output.json().get("choices")[1].get("content"))
+        # await ctx.respond(output.json().get("choices")[1].get("content"))
 
 
 def setup(client):
