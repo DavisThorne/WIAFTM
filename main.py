@@ -31,6 +31,7 @@ guildID = config.get("guild_id")
 client.load_extension("modules.funny")
 client.load_extension("modules.utils")
 client.load_extension("modules.economy")
+client.load_extension("modules.casino")
 
 
 # Events

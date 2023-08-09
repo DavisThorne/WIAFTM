@@ -1,9 +1,6 @@
-import discord
 from discord.ext import commands
-import random
 import json
 import os
-import pathlib as path
 
 
 class Economy(commands.Cog, name="Economy"):
