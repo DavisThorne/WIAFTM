@@ -41,9 +41,9 @@ class Casino(commands.Cog, name="Casino"):
                 break
             n += 1
 
-        spin1 = random.randint(1, 10)
-        spin2 = random.randint(1, 10)
-        spin3 = random.randint(1, 10)
+        spin1 = random.randint(1, 5)
+        spin2 = random.randint(1, 5)
+        spin3 = random.randint(1, 5)
 
         if spin1 == spin2 == spin3:
             winnings = (bet * 10) - bet
@@ -54,7 +54,7 @@ class Casino(commands.Cog, name="Casino"):
         else:
             winnings = 0 - bet
             await ctx.respond(f"No numbers were equal, you lost: {bet}")
-
+        n = 0
         for key in json.loads(open(os.getcwd() + "\\lookup_tables\\economy_db.json", "r").read()).get("users"):
             if key.get("userID") == user_id:
                 data = json.loads(open(os.getcwd() + "\\lookup_tables\\economy_db.json", "r+").read())
