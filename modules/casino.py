@@ -8,64 +8,93 @@ import os
 class Casino(commands.Cog, name="Casino"):
     def __init__(self, client):
         self.client = client
+        self.data_path = os.path.join(os.getcwd(), "lookup_tables", "economy_db.json")
+
+    async def load_data(self):
+        with open(self.data_path, "r") as f:
+            return json.load(f)
+
+    async def save_data(self, data):
+        with open(self.data_path, "w") as f:
+            json.dump(data, f, indent=4)
+
+    async def get_user_data(self, user_id):
+        data = await self.load_data()
+        for user in data["users"]:
+            if user["userID"] == user_id:
+                return user
+        return None
+
+    async def update_user_balance(self, user_id, amount):
+        data = await self.load_data()
+        for user in data["users"]:
+            if user["userID"] == user_id:
+                user["balance"] += amount
+                if user["balance"] < 0:
+                    user["balance"] = 0
+                await self.save_data(data)
+                return
+
+    @commands.slash_command(name="slots", description="Spin a slot machine, maybe you win")
+    async def slots(self, ctx, bet: discord.Option(int)):
+        user_id = ctx.author.id
+        user_data = await self.get_user_data(user_id)
+        if not user_data:
+            await self.add_user_db(user_id, ctx)
+            return
+
+        if bet > user_data["balance"]:
+            await ctx.respond("You don't have enough money to make that bet")
+            return
+
+        spin_results = [random.randint(1, 7) for _ in range(3)]
+
+        if len(set(spin_results)) == 1:
+            winnings = (bet * 5) - bet
+            await ctx.respond(f"All three numbers were equal, you win: £{winnings}")
+        elif len(set(spin_results)) == 2:
+            winnings = (bet * 3) - bet
+            await ctx.respond(f"Two of the numbers were equal, you win: £{winnings}")
+        else:
+            winnings = 0 - bet
+            await ctx.respond(f"No numbers were equal, you lost: £{bet}")
+
+        await self.update_user_balance(user_id, winnings)
+
+    @commands.slash_command(name="coinflip", description="Flip a coin, maybe you win")
+    async def coinflip(self, ctx, choices: discord.Option(str, choices=["Heads", "Tails"], required=True),
+                       bet: discord.Option(int, required=True)):
+        user_id = ctx.author.id
+        user_data = await self.get_user_data(user_id)
+        if not user_data:
+            await self.add_user_db(user_id, ctx)
+            return
+
+        if bet > user_data["balance"]:
+            await ctx.respond("You don't have enough money to make that bet")
+            return
+
+        result = random.choice(["Heads", "Tails"])
+        if result == choices:
+            winnings = bet * 2
+            await ctx.respond(f"The coin landed on {result}, you win: £{winnings}")
+        else:
+            winnings = 0 - bet
+            await ctx.respond(f"The coin landed on {result}, you lost: £{bet}")
+
+        await self.update_user_balance(user_id, winnings)
 
     async def add_user_db(self, userID, ctx):
         json_data = {
             "userID": userID,
             "balance": 2500,
-            "assets": [
-                {}
-            ]
+            "assets": [{}]
         }
-        with open(os.getcwd() + "\\lookup_tables\\economy_db.json", "r+") as f:
-            file_data = json.load(f)
-            file_data["users"].append(json_data)
-            f.seek(0)
-            json.dump(file_data, f, indent=4)
-        await ctx.respond("You didnt have an account, we have added one. Your starting balance is £2500",
+        data = await self.load_data()
+        data["users"].append(json_data)
+        await self.save_data(data)
+        await ctx.respond("You didn't have an account, we have added one. Your starting balance is £2500",
                           ephemeral=True)
-
-    @commands.slash_command(name="slots", description="Spin a slot machine, maybe you win")
-    async def slots(self, ctx,
-                    bet: discord.Option(int)):
-        user_id = ctx.author.id
-        n = 0
-
-        data = json.loads(open(os.getcwd() + "\\lookup_tables\\economy_db.json", "r").read())
-
-        for key in json.loads(open(os.getcwd() + "\\lookup_tables\\economy_db.json", "r").read()).get("users"):
-            if key.get("userID") == user_id:
-                if bet > data["users"][n]["balance"]:
-                    await ctx.respond("You dont have enough money to make that bet")
-                    return
-                break
-            n += 1
-
-        spin1 = random.randint(1, 5)
-        spin2 = random.randint(1, 5)
-        spin3 = random.randint(1, 5)
-
-        if spin1 == spin2 == spin3:
-            winnings = (bet * 10) - bet
-            await ctx.respond(f"All three numbers were equal, you win: {winnings}")
-        elif spin1 == spin2 or spin2 == spin3 or spin1 == spin3:
-            winnings = (bet * 5) - bet
-            await ctx.respond(f"two of the numbers were equal, you win: {winnings}")
-        else:
-            winnings = 0 - bet
-            await ctx.respond(f"No numbers were equal, you lost: {bet}")
-        n = 0
-        for key in json.loads(open(os.getcwd() + "\\lookup_tables\\economy_db.json", "r").read()).get("users"):
-            if key.get("userID") == user_id:
-                data = json.loads(open(os.getcwd() + "\\lookup_tables\\economy_db.json", "r+").read())
-                if data["users"][n]["balance"] <= 0:
-                    data["users"][n]["balance"] = 0
-                data["users"][n]["balance"] = data["users"][n]["balance"] + winnings
-                break
-            n += 1
-
-        with open(os.getcwd() + "\\lookup_tables\\economy_db.json", "w") as f:
-            f.write(json.dumps(data, indent=4))
 
 
 def setup(client):
