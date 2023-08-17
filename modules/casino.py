@@ -102,11 +102,12 @@ class Casino(commands.Cog, name="Casino"):
         dealer_string_unhidden = f"Dealer's Hand: {dealer_hand[0]}, {dealer_hand[1]}"
         player_string = f"Your Hand: {player_hand[0]}, {player_hand[1]}"
         if player_total == 21:
-            await ctx.respond(f"{dealer_string}\n{player_string}\nYou got Blackjack! You win: £{bet * 2:,}")
-            await self.update_user_balance(user_id, bet * 2)
+            await ctx.respond(f"{dealer_string}\n{player_string}\nYou got Blackjack! You win: £{bet * 2:,}",
+                              ephemeral=True)
+            await self.update_user_balance(user_id, bet)
             return
         while player_total < 21:
-            await ctx.respond(f"{dealer_string}\n{player_string}\nWould you like to hit or stand?",
+            await ctx.respond(f"{dealer_string}\n{player_string}\nWould you like to hit or stand? (type hit or stand)",
                               ephemeral=True)
             hit_or_stand = await self.client.wait_for("message", check=lambda m: m.author == ctx.author)
             if hit_or_stand.content.lower() == "hit":
@@ -115,13 +116,14 @@ class Casino(commands.Cog, name="Casino"):
                 player_string += f", {player_hand[-1]}"
                 await hit_or_stand.delete()
                 if player_total > 21:
-                    await ctx.respond(f"{dealer_string_unhidden}\n{player_string}\nYou busted! You lost: £{bet:,}")
+                    await ctx.respond(f"{dealer_string_unhidden}\n{player_string}\nYou busted! You lost: £{bet:,}",
+                                      ephemeral=True)
                     await self.update_user_balance(user_id, 0 - bet)
                     return
                 elif len(player_hand) == 5 and player_total <= 21:
                     await ctx.respond(f"{dealer_string_unhidden}\n{player_string}\nYou got 5 cards without busting! "
-                                      f"You win: £{bet * 2:,}")
-                    await self.update_user_balance(user_id, bet * 2)
+                                      f"You win: £{bet * 2:,}", ephemeral=True)
+                    await self.update_user_balance(user_id, bet)
                     return
             else:
                 await hit_or_stand.delete()
@@ -132,18 +134,23 @@ class Casino(commands.Cog, name="Casino"):
             dealer_string += f", {dealer_hand[-1]}"
             dealer_string_unhidden += f", {dealer_hand[-1]}"
             if dealer_total > 21:
-                await ctx.respond(f"{dealer_string_unhidden}\n{player_string}\nThe dealer busted! You win: £{bet * 2:,}")
-                await self.update_user_balance(user_id, (bet * 2))
+                await ctx.respond(
+                    f"{dealer_string_unhidden}\n{player_string}\nThe dealer busted! You win: £{bet * 2:,}",
+                    ephemeral=True)
+                await self.update_user_balance(user_id, bet)
                 return
         if dealer_total > player_total:
-            await ctx.respond(f"{dealer_string_unhidden}\n{player_string}\nThe dealer won! You lost: £{bet:,}")
+            await ctx.respond(f"{dealer_string_unhidden}\n{player_string}\nThe dealer won! You lost: £{bet:,}",
+                              ephemeral=True)
             await self.update_user_balance(user_id, 0 - bet)
         elif dealer_total < player_total:
-            await ctx.respond(f"{dealer_string_unhidden}\n{player_string}\nYou won! You win: £{bet * 2:,}")
-            await self.update_user_balance(user_id, (bet * 2))
-        else:
-            await ctx.respond(f"{dealer_string_unhidden}\n{player_string}\nYou tied with the dealer! You win: £{bet:,}")
+            await ctx.respond(f"{dealer_string_unhidden}\n{player_string}\nYou won! You win: £{bet * 2:,}",
+                              ephemeral=True)
             await self.update_user_balance(user_id, bet)
+        else:
+            await ctx.respond(f"{dealer_string_unhidden}\n{player_string}\nYou tied with the dealer! You win: £{bet:,}",
+                              ephemeral=True)
+            await self.update_user_balance(user_id, 0)
 
     async def add_user_db(self, userID, ctx):
         json_data = {
