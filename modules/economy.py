@@ -52,7 +52,7 @@ class Economy(commands.Cog, name="Economy"):
         user_id = ctx.author.id
         user_data = await self.get_user_data(user_id)
         if user_data:
-            await ctx.respond(f'Your balance is: £{user_data["balance"]}')
+            await ctx.respond(f'Your balance is: £{user_data["balance"]:,}')
         else:
             await self.add_user_db(user_id, ctx)
 
@@ -67,9 +67,9 @@ class Economy(commands.Cog, name="Economy"):
     @commands.slash_command(name="edit_money", description="Give a user some money")
     @commands.has_permissions(administrator=True)
     async def edit_money(self, ctx,
-                              action: discord.Option(str, choices=["give", "take"], required=True),
-                              user: discord.Option(str, required=True),
-                              amount: discord.Option(str, required=True)):
+                         action: discord.Option(str, choices=["give", "take"], required=True),
+                         user: discord.Option(str, required=True),
+                         amount: discord.Option(str, required=True)):
         action_text = "given" if action == "give" else "taken"
         user_id = int(user)
         user_data = await self.get_user_data(user_id)

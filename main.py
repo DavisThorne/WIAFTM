@@ -18,7 +18,7 @@ import random
 # lookup Table Variables
 config = json.load(open("config.json", "r"))
 cringe_lookup = json.load(open(f"{os.getcwd()}\lookup_tables\cringe.json", "r"))
-quotes_lookup = json.load(open(f"{os.getcwd()}\lookup_tables\quotes.json", "r"))
+quotes_lookup = json.load(open(f"{os.getcwd()}\lookup_tables\quote.json", "r"))
 
 # Bot Variables
 client = commands.Bot(intents=discord.Intents.all(), command_prefix="!")
