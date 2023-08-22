@@ -18,6 +18,7 @@ import random
 # lookup Table Variables
 config = json.load(open("config.json", "r"))
 cringe_lookup = json.load(open(f"{os.getcwd()}\lookup_tables\cringe.json", "r"))
+quotes_lookup = json.load(open(f"{os.getcwd()}\lookup_tables\quote.json", "r"))
 
 # Bot Variables
 client = commands.Bot(intents=discord.Intents.all(), command_prefix="!")
@@ -61,6 +62,15 @@ async def help(ctx):
         inline=False
     )
     await ctx.respond(embed=help_embed)
+
+
+@client.slash_command(name="change_status", description="Changes the bots status to a random quote")
+async def change_status(ctx):
+    items = len(quotes_lookup)
+    num = random.randint(1, items)
+    reply = quotes_lookup.get(f"{str(num)}")
+    await client.change_presence(activity=discord.Game(name=reply))
+    await ctx.respond("Status Changed")
 
 
 client.run(token)

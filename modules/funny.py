@@ -8,58 +8,54 @@ import os
 class Funny(commands.Cog, name="Funny"):
     def __init__(self, client):
         self.client = client
-        self.quote_role = (json.load(open("config.json", "r"))).get("quote_role")
-        self.cringe_lookup = json.load(open(f"{os.getcwd()}\\lookup_tables\\cringe.json", "r"))
-        self.quote_lookup = json.load(open(f"{os.getcwd()}\\lookup_tables\\quotes.json", "r"))
+        self.config = json.load(open("config.json", "r"))
+        self.quote_role = self.config.get("quote_role")
+        self.lookup_dir = os.path.join(os.getcwd(), "lookup_tables")
+        self.cringe_lookup = self.load_lookup_table("cringe.json")
+        self.quote_lookup = self.load_lookup_table("quote.json")
 
-    @commands.slash_command(name="quote_add", description="Adds a quote to the quote lookup table")
-    @commands.has_role(f"Quote Master")
+    def load_lookup_table(self, filename):
+        file_path = os.path.join(self.lookup_dir, filename)
+        with open(file_path, "r") as f:
+            return json.load(f)
+
+    def save_lookup_table(self, filename, data):
+        file_path = os.path.join(self.lookup_dir, filename)
+        with open(file_path, "w") as f:
+            json.dump(data, f, indent=4)
+
+    @commands.slash_command(name="quote_add", description="Adds a quote to the quote or cringe lookup table")
+    @commands.has_role("Quote Master")
     async def add_quote(self, ctx,
                         quote_type: discord.Option(str, choices=["quote", "cringe"], required=True),
                         message_id: discord.Option(str)):
         message = await ctx.channel.fetch_message(message_id)
         quote = message.content
-        if quote_type == "quote":
-            items = len(self.quote_lookup)
-            self.quote_lookup[f"{str(items + 1)}"] = quote
-            with open(f"{os.getcwd()}\\lookup_tables\\quotes.json", "w") as f:
-                json.dump(self.quote_lookup, f, indent=4)
-            await ctx.respond(f'"{str(quote)}" has been added to the quote lookup table.', ephemeral=True)
+        lookup_table = self.quote_lookup if quote_type == "quote" else self.cringe_lookup
+        items = len(lookup_table)
+        lookup_table[str(items + 1)] = quote
+        self.save_lookup_table(f"{quote_type}.json", lookup_table)
+        await ctx.respond(f'"{quote}" has been added to the {quote_type} lookup table.', ephemeral=True)
 
-        if quote_type == "cringe":
-            items = len(self.cringe_lookup)
-            self.cringe_lookup[f"{str(items + 1)}"] = quote
-            with open(f"{os.getcwd()}\\lookup_tables\\cringe.json", "w") as f:
-                json.dump(self.cringe_lookup, f, indent=4)
-            await ctx.respond(f'"{str(quote)}" has been added to the cringe lookup table.', ephemeral=True)
-
-    @commands.slash_command(name="quote", description="Returns a random quote")
+    @commands.slash_command(name="quote", description="Returns a random quote or cringe")
     async def quote(self, ctx,
                     quote_type: discord.Option(str, choices=["quote", "cringe"], required=True)):
-        if quote_type == "quote":
-            embed = discord.Embed(title="Quote",
-                                  color=0x00ff00)
-            items = len(self.quote_lookup)
-            num = random.randint(1, items)
-            reply = self.quote_lookup.get(f"{str(num)}")
-            embed.add_field(name="Sick As Fuck", value=reply, inline=False)
-            await ctx.respond(embed=embed)
-
+        lookup_table = self.quote_lookup if quote_type == "quote" else self.cringe_lookup
+        items = len(lookup_table)
+        num = random.randint(1, items)
+        reply = lookup_table.get(str(num))
+        embed_title = "Quote" if quote_type == "quote" else "Cringe"
+        embed_color = 0x00ff00
         if quote_type == "cringe":
-            embed = discord.Embed(title="Quote",
-                                  color=0x00ff00)
-            items = len(self.cringe_lookup)
-            num = random.randint(1, items)
-            reply = self.cringe_lookup.get(f"{str(num)}")
-            embed.add_field(name="Cringe As Fuck", value=reply, inline=False)
-            await ctx.respond(embed=embed)
+            embed_color = 0xff0000
+        embed = discord.Embed(title=embed_title, color=embed_color)
+        embed.add_field(name="Sick As Fuck" if quote_type == "quote" else "Cringe As Fuck", value=reply, inline=False)
+        await ctx.respond(embed=embed)
 
     @add_quote.error
     async def role_error(self, ctx, error):
-        print(error)
         if isinstance(error, commands.MissingRole):
-            print("error handling worked")
-            await ctx.send("You must have role 'Quote Master' to use this command", ephemeral=True)
+            await ctx.send("You must have the 'Quote Master' role to use this command", ephemeral=True)
         else:
             raise error
 
