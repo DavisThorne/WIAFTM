@@ -2,6 +2,7 @@ import discord
 from discord.ext import commands
 import json
 import os
+import random
 
 
 class Economy(commands.Cog, name="Economy"):
@@ -80,6 +81,35 @@ class Economy(commands.Cog, name="Economy"):
         amount = int(amount) if action == "give" else -int(amount)
         await self.modify_balance(user_id, amount)
         await ctx.respond(f'You have {action_text} from <@{user_id}> £{abs(amount)}', ephemeral=True)
+
+    @commands.slash_command(name="leaderboard", description="Returns the top 10 richest users")
+    async def leaderboard(self, ctx):
+        data = await self.load_data()
+        sorted_data = sorted(data["users"], key=lambda x: x["balance"], reverse=True)
+        embed = discord.Embed(title="Leaderboard", color=0x00ff00)
+        for i, user in enumerate(sorted_data[:10]):
+            embed.add_field(name=f"{i + 1}:", value=f"<@{user['userID']}>: £{user['balance']:,}", inline=False)
+        await ctx.respond(embed=embed)
+
+    @commands.slash_command(name="work", description="Work for some money")
+    @commands.cooldown(1, 60 * 5, commands.BucketType.user)
+    async def work(self, ctx):
+        user_id = ctx.author.id
+        user_data = await self.get_user_data(user_id)
+        if not user_data:
+            await self.add_user_db(user_id, ctx)
+            return
+
+        earnings = random.randint(100, 1000)
+        await self.modify_balance(user_id, earnings)
+        await ctx.respond(f"You worked hard and earned £{earnings:,}")
+
+    @work.error
+    async def cooldown_error(self, ctx, error):
+        if isinstance(error, commands.CommandOnCooldown):
+            await ctx.respond(f"You are on cooldown. Try again in {error.retry_after:.2f}s", ephemeral=True)
+        else:
+            raise error
 
 
 def setup(client):
