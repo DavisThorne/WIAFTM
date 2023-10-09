@@ -2,8 +2,8 @@ import discord
 from discord.ext import commands
 import random
 import json
-import os
-import requests
+import io
+import aiohttp
 
 
 class Utils(commands.Cog, name="Utils"):
@@ -45,11 +45,30 @@ class Utils(commands.Cog, name="Utils"):
         await ctx.respond(f"Asking AI: {question}")
 
         ai_response = requests.post('https://api.pawan.krd/pai-001-light-beta/v1/chat/completions', headers=headers,
-                                 json=json_data)
+                                    json=json_data)
         ai_content = ai_response.json().get("choices")[0].get("message").get("content")
         print(ai_response)
         print(json.dumps(ai_content, indent=4))
         await ctx.respond(json.dumps(ai_content, indent=4))
+
+    @commands.slash_command(name="random_hex_code", descriprion="Returns are random hex code")
+    async def random_hex_code(self, ctx):
+        charset = "0123456789ABCDF"
+        output = ""
+        channel = ctx.channel
+        for _ in range(6):
+            temp = random.choice(charset)
+            output += temp
+
+        url = f"https://singlecolorimage.com/get/{output}/512x512"
+
+        async with aiohttp.ClientSession() as session:
+            async with session.get(url) as resp:
+                if resp.status != 200:
+                    return await channel.send('Could not download file...')
+                data = io.BytesIO(await resp.read())
+                await ctx.respond(f"Here is your random hex code: #{output}",
+                                  file=discord.File(data, 'cool_image.png'))
 
 
 def setup(client):
