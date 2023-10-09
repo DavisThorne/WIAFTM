@@ -52,6 +52,15 @@ class Funny(commands.Cog, name="Funny"):
         embed.add_field(name="Sick As Fuck" if quote_type == "quote" else "Cringe As Fuck", value=reply, inline=False)
         await ctx.respond(embed=embed)
 
+    @commands.slash_command(name="true_or_false", description="Returns True or False")
+    async def true_or_false(self, ctx,
+                            message: discord.Option(str, required=True)):
+        choice = random.randint(0, 100)
+        if choice < 50:
+            await ctx.respond(f"\"{message}\" \nThat is true")
+        elif choice >= 50:
+            await ctx.respond(f"\"{message}\" \nThat is false")
+
     @add_quote.error
     async def role_error(self, ctx, error):
         if isinstance(error, commands.MissingRole):
