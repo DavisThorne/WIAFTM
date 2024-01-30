@@ -1,10 +1,11 @@
 {
-  "bot_token": "Enter your bots token",
+  "bot_token": "MTEzNzg0NTI3MDYwNDk0MzQwMQ.GtVwJL.hqC2bZ8i1XR6rLlKQV7z5P0kk7q67X2Ek9wf70",
+  "bot_tokenDev": "MTE2MTA0MzM1NDkzNTYzMjAzNg.GgAwtA.F9vlAiridO75gg5FTGfDzdJpp-zJpGfHCQP8_A",
   "client_id": "enter client ID, (this is currently unused)",
   "client_secret": "enter client secret, (currently unused)",
   "owner_id": "enter owner ID, (Currently unused)",
   "guild_id": "Enter guild ID, (currently unused)",
-  "quote_roll": "Enter the roll ID for the roll that will allow to have quotes added to the table",
+  "quote_roll": "1139668639713337484",
   "api_key": "API key for pawan-krd reverse proxy (discord.pawan.krd)",
   "clyde_channel": "channel that the clyde command to be used in (currently unfunctional)"
 }

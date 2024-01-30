@@ -74,9 +74,15 @@ class Casino(commands.Cog, name="Casino"):
             await ctx.respond("You don't have enough money to make that bet")
             return
 
-        result = random.choice(["Heads", "Tails"])
+        #result = random.choice(["Heads", "Tails"]) # change this when can be fucked
+        result = random.randint(0, 100000)
+        if result <= 50000:
+            result = "Heads"
+        else:
+            result = "Tails"
+
         if result == choices:
-            winnings = bet * 2
+            winnings = bet * 2.5
             await ctx.respond(f"The coin landed on {result}, you win: £{winnings:,}")
         else:
             winnings = 0 - bet
@@ -89,6 +95,11 @@ class Casino(commands.Cog, name="Casino"):
                         bet: discord.Option(int, required=True)):
         user_id = ctx.author.id
         user_data = await self.get_user_data(user_id)
+
+        if bet > user_data["balance"]:
+            await ctx.respond("You don't have enough money to make that bet")
+            return
+
         if not user_data:
             await self.add_user_db(user_id, ctx)
             return

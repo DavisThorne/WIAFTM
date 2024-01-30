@@ -16,16 +16,16 @@ from discord.ext import commands
 import random
 
 # lookup Table Variables
-if not os.path.exists(f"{os.getcwd()}\lookup_tables\cringe.json"):
-    with open(f"{os.getcwd()}\lookup_tables\cringe.json", "w") as f:
+if not os.path.exists(f"{os.getcwd()}/lookup_tables/cringe.json"):
+    with open(f"{os.getcwd()}/lookup_tables/cringe.json", "w") as f:
         json.dump({}, f, indent=4)
-if not os.path.exists(f"{os.getcwd()}\lookup_tables\quote.json"):
-    with open(f"{os.getcwd()}\lookup_tables\quote.json", "w") as f:
+if not os.path.exists(f"{os.getcwd()}/lookup_tables/quote.json"):
+    with open(f"{os.getcwd()}/lookup_tables/quote.json", "w") as f:
         json.dump({}, f, indent=4)
 
 config = json.load(open("config.json", "r"))
-cringe_lookup = json.load(open(f"{os.getcwd()}\lookup_tables\cringe.json", "r"))
-quotes_lookup = json.load(open(f"{os.getcwd()}\lookup_tables\quote.json", "r"))
+cringe_lookup = json.load(open(f"{os.getcwd()}/lookup_tables/cringe.json", "r"))
+quotes_lookup = json.load(open(f"{os.getcwd()}/lookup_tables/quote.json", "r"))
 
 # Bot Variables
 client = commands.Bot(intents=discord.Intents.all(), command_prefix="!")
