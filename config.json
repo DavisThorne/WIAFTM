@@ -1,6 +1,6 @@
 {
-  "bot_token": "MTEzNzg0NTI3MDYwNDk0MzQwMQ.GtVwJL.hqC2bZ8i1XR6rLlKQV7z5P0kk7q67X2Ek9wf70",
-  "bot_tokenDev": "MTE2MTA0MzM1NDkzNTYzMjAzNg.GgAwtA.F9vlAiridO75gg5FTGfDzdJpp-zJpGfHCQP8_A",
+  "bot_token": "enter bot token",
+  "bot_tokenDev": "enter dev bot token",
   "client_id": "enter client ID, (this is currently unused)",
   "client_secret": "enter client secret, (currently unused)",
   "owner_id": "enter owner ID, (Currently unused)",
