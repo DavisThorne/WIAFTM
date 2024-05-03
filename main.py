@@ -40,6 +40,7 @@ client.load_extension("modules.funny")
 client.load_extension("modules.utils")
 client.load_extension("modules.economy")
 client.load_extension("modules.casino")
+client.load_extension("modules.admin")
 
 
 # Events
