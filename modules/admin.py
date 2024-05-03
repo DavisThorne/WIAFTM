@@ -70,7 +70,7 @@ class Admin(commands.Cog, name="Admin"):
 
     @commands.slash_command(name="chatisthisreal", description="kek")
     async def chatIsThisReal(self, ctx):
-        for i in range(100):
+        for i in range(10):
             i += 1
             await ctx.respond("Chat is this real?")
 
