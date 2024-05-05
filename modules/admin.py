@@ -52,13 +52,12 @@ class Admin(commands.Cog, name="Admin"):
         if str(message.author) in self.muted_users:
             await message.delete()
 
-    @commands.command(name="clear", description="Clears the chat")
+    @commands.slash_command(name="clear", description="Clears the chat")
     @commands.has_permissions(manage_messages=True)
-    async def clear(self, ctx, amount=15):
-        channel_id = ctx.channel.id
-        channel_name = ctx.channel.name
-        print(ctx.channel)
-        channel_name.purge(limit=amount)
+    async def clear(self, ctx,
+                    amount: discord.Option(int, required=True, description="Amount of messages to clear")):
+        await ctx.channel.purge(limit=amount)
+        await ctx.respond(f"{amount} messages have been cleared from {ctx.channel}", ephemeral=True)
 
     @commands.slash_command(name="mute", description="Mutes a user")
     @commands.has_permissions(administrator=True)
