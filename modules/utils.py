@@ -11,7 +11,7 @@ import aiohttp
 class Utils(commands.Cog, name="Utils"):
     def __init__(self, client):
         self.client = client
-        self.api_key = "pk-TXIsMghMAFdOkSUutBBaZubcIlxmUvrenERGAhJmQAcATABE"
+        self.api_key = (json.load(open("config.json", "r"))).get("api_key")
         self.base_url = "https://api.pawan.krd/v1/completions"
         self.allowed_channel = (json.load(open("config.json", "r"))).get("ai_channel")
 
@@ -42,10 +42,9 @@ class Utils(commands.Cog, name="Utils"):
 
     # async def get_AI(self, question):
     #     openai.api_key = self.api_key
-    #     openai.base_url = self.base_url
     #
     #     completion = openai.chat.completions.create(
-    #         model="gpt-3.5-unfiltered",
+    #         model="gpt-3.5-turbo",
     #         messages=[
     #             {"role": "user", "content": f"{question}"},
     #         ],
