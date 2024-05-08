@@ -67,5 +67,7 @@ class Funny(commands.Cog, name="Funny"):
             await ctx.send("You must have the 'Quote Master' role to use this command", ephemeral=True)
         else:
             raise error
+
+
 def setup(client):
     client.add_cog(Funny(client))
