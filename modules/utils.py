@@ -1,5 +1,5 @@
 import requests
-#import openai
+# import openai
 import discord
 from discord.ext import commands
 import random
@@ -11,19 +11,21 @@ import aiohttp
 class Utils(commands.Cog, name="Utils"):
     def __init__(self, client):
         self.client = client
-        self.api_key = (json.load(open("config.json", "r"))).get("api_key")
+        self.api_key = json.load(open("config.json", "r")).get("api_key")
         self.base_url = "https://api.pawan.krd/v1/completions"
-        self.allowed_channel = (json.load(open("config.json", "r"))).get("ai_channel")
+        self.allowed_channel = json.load(open("config.json", "r")).get("ai_channel")
 
     async def pawan_ai(self, question):
         api_key = self.api_key
         base_url = self.base_url
+        temperature = json.load(open("config.json", "r")).get("ai_temperature")
+        max_tokens = json.load(open("config.json", "r")).get("ai_max_tokens")
 
         json_data = {
             "model": "pai-001-light",
             "prompt": f"{question}\nAI:",
-            "temperature": 0.7,
-            "max_tokens": 256,
+            "temperature": float(temperature),
+            "max_tokens": int(max_tokens),
             "stop": ["Human:",
                      "AI:"]
         }
@@ -34,6 +36,7 @@ class Utils(commands.Cog, name="Utils"):
         }
 
         response = requests.post(base_url, headers=headers, json=json_data).json()
+        print(response)
         response = response["choices"][0]["text"]
 
         return response
