@@ -19,9 +19,24 @@ import random
 if not os.path.exists(f"{os.getcwd()}/lookup_tables/cringe.json"):
     with open(f"{os.getcwd()}/lookup_tables/cringe.json", "w") as f:
         json.dump({}, f, indent=4)
+
 if not os.path.exists(f"{os.getcwd()}/lookup_tables/quote.json"):
     with open(f"{os.getcwd()}/lookup_tables/quote.json", "w") as f:
         json.dump({}, f, indent=4)
+
+if not os.path.exists(f"{os.getcwd()}/config.json"):
+    json_data = {
+        "bot_token": "Enter bot token",
+        "client_id": "Enter client ID, (this is currently unused)",
+        "client_secret": "Enter client secret, (currently unused)",
+        "owner_id": "Enter owner ID, (Currently unused)",
+        "guild_id": "Enter guild ID, (currently unused)",
+        "quote_roll": "Enter the role ID for the quote master role",
+        "api_key": "API key for pawan-krd or OpenAI reverse proxy (discord.pawan.krd for pawan-krd AI)",
+        "ai_channel": "channel that the ai commands to be used in"
+    }
+    with open(f"{os.getcwd()}/config.json", "w") as f:
+        json.dump(json_data, f, indent=4)
 
 config = json.load(open("config.json", "r"))
 cringe_lookup = json.load(open(f"{os.getcwd()}/lookup_tables/cringe.json", "r"))
