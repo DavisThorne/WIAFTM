@@ -36,7 +36,6 @@ class Utils(commands.Cog, name="Utils"):
         }
 
         response = requests.post(base_url, headers=headers, json=json_data).json()
-        print(response)
         response = response["choices"][0]["text"]
 
         return response
