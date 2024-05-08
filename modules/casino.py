@@ -50,10 +50,10 @@ class Casino(commands.Cog, name="Casino"):
         spin_results = [random.randint(1, 7) for _ in range(3)]
 
         if len(set(spin_results)) == 1:
-            winnings = (bet * 5) - bet
+            winnings = (bet * 4)
             await ctx.respond(f"All three numbers were equal, you win: £{winnings:,}")
         elif len(set(spin_results)) == 2:
-            winnings = (bet * 3) - bet
+            winnings = (bet * 2)
             await ctx.respond(f"Two of the numbers were equal, you win: £{winnings:,}")
         else:
             winnings = 0 - bet
@@ -74,9 +74,15 @@ class Casino(commands.Cog, name="Casino"):
             await ctx.respond("You don't have enough money to make that bet")
             return
 
-        result = random.choice(["Heads", "Tails"])
+        #result = random.choice(["Heads", "Tails"]) # change this when can be fucked
+        result = random.randint(0, 100000)
+        if result <= 50000:
+            result = "Heads"
+        else:
+            result = "Tails"
+
         if result == choices:
-            winnings = bet * 2
+            winnings = bet * 2.5
             await ctx.respond(f"The coin landed on {result}, you win: £{winnings:,}")
         else:
             winnings = 0 - bet
@@ -89,6 +95,11 @@ class Casino(commands.Cog, name="Casino"):
                         bet: discord.Option(int, required=True)):
         user_id = ctx.author.id
         user_data = await self.get_user_data(user_id)
+
+        if bet > user_data["balance"]:
+            await ctx.respond("You don't have enough money to make that bet")
+            return
+
         if not user_data:
             await self.add_user_db(user_id, ctx)
             return
@@ -123,12 +134,14 @@ class Casino(commands.Cog, name="Casino"):
                 elif len(player_hand) == 5 and player_total <= 21:
                     await ctx.respond(f"{dealer_string_unhidden}\n{player_string}\nYou got 5 cards without busting! "
                                       f"You win: £{bet * 2:,}", ephemeral=True)
-                    await self.update_user_balance(user_id, bet)
+                    await self.update_user_balance(user_id, bet*2)
                     return
             else:
                 await hit_or_stand.delete()
                 break
+        n = 0
         while dealer_total < 17:
+            n += 1
             dealer_hand.append(deck.pop())
             dealer_total = sum(dealer_hand)
             dealer_string += f", {dealer_hand[-1]}"
@@ -137,7 +150,12 @@ class Casino(commands.Cog, name="Casino"):
                 await ctx.respond(
                     f"{dealer_string_unhidden}\n{player_string}\nThe dealer busted! You win: £{bet * 2:,}",
                     ephemeral=True)
-                await self.update_user_balance(user_id, bet)
+                await self.update_user_balance(user_id, bet*2)
+                return
+            if n == 5:
+                await ctx.respond(f"{dealer_string_unhidden}\n{player_string}\nThe dealer got 5 cards without busting! "
+                                  f"You lost: £{bet:,}", ephemeral=True)
+                await self.update_user_balance(user_id, 0 - bet)
                 return
         if dealer_total > player_total:
             await ctx.respond(f"{dealer_string_unhidden}\n{player_string}\nThe dealer won! You lost: £{bet:,}",
@@ -146,11 +164,11 @@ class Casino(commands.Cog, name="Casino"):
         elif dealer_total < player_total:
             await ctx.respond(f"{dealer_string_unhidden}\n{player_string}\nYou won! You win: £{bet * 2:,}",
                               ephemeral=True)
-            await self.update_user_balance(user_id, bet)
+            await self.update_user_balance(user_id, bet*2)
         else:
             await ctx.respond(f"{dealer_string_unhidden}\n{player_string}\nYou tied with the dealer! You win: £{bet:,}",
                               ephemeral=True)
-            await self.update_user_balance(user_id, 0)
+            await self.update_user_balance(user_id, bet)
 
     async def add_user_db(self, userID, ctx):
         json_data = {
