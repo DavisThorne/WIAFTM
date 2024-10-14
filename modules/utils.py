@@ -9,13 +9,29 @@ import aiohttp
 
 
 class Utils(commands.Cog, name="Utils"):
+    """
+    This class/module contains all the utility commands for the bot.
+
+    """
     def __init__(self, client):
         self.client = client
         self.api_key = json.load(open("config.json", "r")).get("api_key")
-        self.base_url = "https://api.pawan.krd/v1/completions"
+        self.base_url = "https://api.pawan.krd/v1/completions/"
         self.allowed_channel = json.load(open("config.json", "r")).get("ai_channel")
 
     async def pawan_ai(self, question):
+        """
+        This function uses the pawan-krd API to get a response to a question.
+        Attributes:
+            base_url: This is the base url that will be called for the specific AI model of choice
+            api_key: This is the API key from pawan-krd that is used to authenticate the request
+            response: The full json response from the API
+        Arguments:
+            question: The question that is posted to the API to get a response
+        Returns:
+            response: This is a stripped down version of the response that only contains the text response from the model
+        """
+
         api_key = self.api_key
         base_url = self.base_url
         temperature = json.load(open("config.json", "r")).get("ai_temperature")
@@ -36,6 +52,9 @@ class Utils(commands.Cog, name="Utils"):
         }
 
         response = requests.post(base_url, headers=headers, json=json_data).json()
+
+        print(response)
+
         response = response["choices"][0]["text"]
 
         return response
@@ -69,7 +88,8 @@ class Utils(commands.Cog, name="Utils"):
             await ctx.respond(f"Asking the all mighty gods", ephemeral=True)
             response = await self.pawan_ai(question)
 
-            await ctx.channel.send(f"The Gods State:\n{response}")
+            await ctx.channel.send(
+                f"In response to {str(ctx.author)[:-2]}'s following question,\"{question}\" the Gods state:\n|\n|\n{response}")
 
     @commands.slash_command(name="random_hex_code", descriprion="Returns are random hex code")
     async def random_hex_code(self, ctx):

@@ -1,11 +1,8 @@
+# Description: Main file for the discord bot.
 """
-WIP Private Discord Bot
-Key Features:
-    - Random Memes (can be assigned to go off at random times)
-    - Replies to certain words/phrases
-    - Games (Tic Tac Toe, Hangman, etc.)
-    - Random Num Gen that decided if we get mortal
-    -
+Main entrypoint for the discord bot.
+Handles basic bot setup and imports other modules.
+Has core basic commands and on_ready event
 """
 
 # Imports
