@@ -1,7 +1,8 @@
+WIAFTM
+======
 
-# WIAFTM
-
-WIAFTM (Wacky Inflatable Arm Flailing Tube Man), is a private discord bot intended to be used mainly in one guild, but it can function in multiple but some features may be broken, I took a modular design process, so you don't need more than you intend to use
+## Overview
+"WIAFTM" (Wacky Inflatable Arm Flailing Tube Man) is a discord bot
 
 ## Key Features
 - Modular Design
